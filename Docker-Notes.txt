@@ -1,0 +1,103 @@
+🐳 Docker Tutorial Notes
+1. What is Docker?
+
+A containerization platform that lets you package applications with dependencies into portable containers.
+
+Containers are lightweight, faster, and use less resources compared to Virtual Machines.
+
+
+2. Core Concepts
+
+Image → Blueprint for container (like a snapshot with OS + app).
+
+Container → Running instance of an image.
+
+Dockerfile → Instructions to build an image.
+
+Docker Hub → Public registry for Docker images.
+
+Volumes → Persistent storage for containers.
+
+Networks → Communication between containers.
+
+3. Basic Commands
+🔹 Image Commands
+docker pull nginx              # Download image
+docker images                  # List images
+docker rmi <image_id>          # Remove image
+
+🔹 Container Commands
+docker run hello-world         # Run container
+docker run -it ubuntu bash     # Run Ubuntu interactively
+docker ps                      # List running containers
+docker ps -a                   # List all containers
+docker stop <container_id>     # Stop container
+docker rm <container_id>       # Remove container
+
+🔹 Building Images
+docker build -t myapp:1.0 .    # Build image from Dockerfile
+docker run -p 8080:80 myapp    # Run image with port mapping
+
+4. Dockerfile Basics
+# Use base image
+FROM python:3.10
+
+# Set working directory
+WORKDIR /app
+
+# Copy app files
+COPY . .
+
+# Install dependencies
+RUN pip install -r requirements.txt
+
+# Expose port
+EXPOSE 5000
+
+# Run app
+CMD ["python", "app.py"]
+
+5. Docker Volumes & Networks
+Volumes (persistent storage)
+docker volume create mydata
+docker run -v mydata:/data myapp
+
+Networks (container-to-container communication)
+docker network create mynet
+docker run -d --name db --network mynet mysql
+docker run -d --name app --network mynet myapp
+
+6. Docker Compose
+
+For running multi-container apps:
+
+version: "3.8"
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+
+
+Run:
+
+docker-compose up
+docker-compose down
+
+7. Best Practices
+
+Use small base images (e.g., alpine).
+
+Use .dockerignore to skip unnecessary files.
+
+Keep containers stateless; use volumes for data.
+
+Tag images properly (myapp:1.0, myapp:latest).
+
+Scan images for vulnerabilities (docker scan <image>).
