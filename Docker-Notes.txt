@@ -22,17 +22,22 @@ Networks → Communication between containers.
 
 3. Basic Commands
 🔹 Image Commands
+```
 docker pull nginx              # Download image
 docker images                  # List images
 docker rmi <image_id>          # Remove image
+```
 
 🔹 Container Commands
+
+```
 docker run hello-world         # Run container
 docker run -it ubuntu bash     # Run Ubuntu interactively
 docker ps                      # List running containers
 docker ps -a                   # List all containers
 docker stop <container_id>     # Stop container
 docker rm <container_id>       # Remove container
+```
 
 🔹 Building Images
 docker build -t myapp:1.0 .    # Build image from Dockerfile
