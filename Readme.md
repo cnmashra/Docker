@@ -1,4 +1,4 @@
-####🐳 Docker Tutorial Notes
+# 🐳 Docker Tutorial Notes
 1. What is Docker?
 
 A containerization platform that lets you package applications with dependencies into portable containers.
