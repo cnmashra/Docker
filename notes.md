@@ -36,5 +36,13 @@ Installing the Mysql Docker steps
 docker pull mysql
 docker run -e  MYSQL_ROOT_PASSWORD=root mysql
 ```
+Command to stop the docker images
+```
+docker stop <docker image id>
+```
+Commad to run docker while installing background add -d in the step
+```
+docker run -d -e MYSQL_ROOT_PASSWORD=root mysql
+```
 
 
