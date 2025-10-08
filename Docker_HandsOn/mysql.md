@@ -143,3 +143,113 @@ Root@123
 mysql>
 
 ```
+
+#### Perfect 💪 Here's a Jenkins Declarative Groovy Pipeline script that automatically checks whether your MySQL Docker container is running and healthy.
+#### If the container (or MySQL service) is down, it sends a notification to Microsoft Teams, Slack, and Outlook (via email) — all in one place.
+
+## 🚀 Jenkins Groovy Script — MySQL Health Check + Multi-channel Alert
+
+```
+pipeline {
+    agent any
+
+    environment {
+        MYSQL_CONTAINER = "mysql-server"
+        TEAMS_WEBHOOK_URL = credentials('teams-webhook')      // Jenkins secret text credential
+        SLACK_WEBHOOK_URL = credentials('slack-webhook')      // Jenkins secret text credential
+        EMAIL_RECIPIENT = "devops-team@example.com"           // Replace with actual Outlook/Email ID
+    }
+
+    stages {
+
+        stage('Check MySQL Container Health') {
+            steps {
+                script {
+                    echo "🔍 Checking MySQL container health..."
+                    def status = sh(script: "docker inspect -f '{{.State.Health.Status}}' ${MYSQL_CONTAINER} || echo 'notfound'", returnStdout: true).trim()
+
+                    if (status == "healthy") {
+                        echo "✅ MySQL container is healthy."
+                    } else {
+                        echo "❌ MySQL container is unhealthy or not found."
+                        currentBuild.result = 'FAILURE'
+                        notifyFailure(status)
+                        error("MySQL container check failed!")
+                    }
+                }
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo "🎉 MySQL health check passed successfully!"
+        }
+        failure {
+            echo "⚠️ MySQL health check failed — notifications sent."
+        }
+    }
+}
+
+// ✅ Notification function for Teams, Slack, and Outlook
+def notifyFailure(status) {
+    echo "📢 Sending failure notifications..."
+
+    // Microsoft Teams notification
+    sh """
+        curl -X POST -H 'Content-Type: application/json' \
+        -d '{"text": "🚨 Jenkins Alert: MySQL container *${MYSQL_CONTAINER}* is *${status}* on ${env.JENKINS_URL}"}' \
+        $TEAMS_WEBHOOK_URL
+    """
+
+    // Slack notification
+    sh """
+        curl -X POST -H 'Content-type: application/json' \
+        --data '{"text": "🚨 *MySQL Container Alert*: ${MYSQL_CONTAINER} is ${status}"}' \
+        $SLACK_WEBHOOK_URL
+    """
+
+    // Outlook (email) notification
+    mail bcc: '',
+         body: """\
+         🚨 Jenkins Alert: MySQL container is ${status}
+         
+         *Container:* ${MYSQL_CONTAINER}
+         *Status:* ${status}
+         *Jenkins Job:* ${env.JOB_NAME}
+         *Build Number:* ${env.BUILD_NUMBER}
+         *Time:* ${new Date()}
+         """,
+         from: 'jenkins@example.com',
+         subject: "🚨 ALERT: MySQL container is ${status}",
+         to: "${EMAIL_RECIPIENT}"
+}
+
+```
+
+### 🧩 Setup Notes
+
+```
+| What                | How to Set It                                                                                                                            |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **Teams Webhook**   | Create an *Incoming Webhook* in your Teams channel → copy the URL → store it as Jenkins **Secret Text** credential → ID: `teams-webhook` |
+| **Slack Webhook**   | Go to Slack → *App Integrations → Incoming Webhooks* → create one → store in Jenkins as Secret Text → ID: `slack-webhook`                |
+| **Email**           | Make sure Jenkins Email Extension plugin is configured with SMTP (Outlook or other mail server)                                          |
+| **MySQL Container** | Name must match `MYSQL_CONTAINER` (default: `mysql-server`)                                                                              |
+| **Health Check**    | Add this to your MySQL container if not already there:                                                                                   |
+
+```
+
+```
+--health-cmd="mysqladmin ping -h localhost -pRoot@123" \
+--health-interval=30s --health-timeout=5s --health-retries=3
+``` |
+
+---
+
+Would you like me to extend this same script to monitor **multiple services** (e.g., MySQL + Nginx + Redis) together and send one combined alert if any service fails?
+```
+
+
+
