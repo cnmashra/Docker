@@ -153,3 +153,89 @@ raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/two-tier-flask-app %
 
 ```
 
+# Steps to install MYSQL project
+
+```
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker pull mysql
+Using default tag: latest
+latest: Pulling from library/mysql
+ecb83b09a418: Already exists 
+91beec75ea95: Already exists 
+113f24e83af6: Already exists 
+20e973ad942c: Already exists 
+49bbd3f4ed8c: Already exists 
+ecd21296720f: Already exists 
+fbda0e12a0b6: Already exists 
+42a31c1f092c: Already exists 
+716452459d78: Already exists 
+ae25a9a46a8f: Already exists 
+Digest: sha256:91447968e66961302339ec4dc4d385f5e1a957d98e63c7d52ecf8b1de0907346
+Status: Downloaded newer image for mysql:latest
+docker.io/library/mysql:latest
+
+What's next:
+    View a summary of image vulnerabilities and recommendations → docker scout quickview mysql
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker run -d -e MYSQL_ROOT_PASSWORD=root mysql
+e52135e6e4d52ccc21cc5b072a38dbd8268e24dc665197e6519f8d037013c8d6
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS         PORTS                 NAMES
+e52135e6e4d5   mysql     "docker-entrypoint.s…"   7 seconds ago   Up 6 seconds   3306/tcp, 33060/tcp   boring_taussig
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % 
+
+```
+
+## Steps to create the devops database inside the mysql instance
+
+```
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker exec -it e52135e6e4d5 bash
+bash-5.1# mysql -u root -proot
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 9
+Server version: 9.4.0 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2025, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+4 rows in set (0.010 sec)
+
+mysql> create database devops;
+Query OK, 1 row affected (0.008 sec)
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| devops             |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+5 rows in set (0.002 sec)
+
+mysql> 
+mysql> exit
+Bye
+bash-5.1# exit
+exit
+
+What's next:
+    Try Docker Debug for seamless, persistent debugging tools in any container or image → docker debug e52135e6e4d5
+    Learn more at https://docs.docker.com/go/debug-cli/
+
+```
