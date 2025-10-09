@@ -262,3 +262,159 @@ raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker network creat
 raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker run -d --name mysql --network two-tier -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=devops mysql
 99993893f495671f2708ae4917de8e12472520ac83ab0b600a230097865542ba
 raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker run -d -p 5000:5000 --network two-tier -e MYSQL_HOST=mysql -e MYSQL_USER=root -e MYSQL_PASSWORD=root -e MYSQL_DB=devops two-tier-backend:latest
+e00572b2b5cfc1f6a98af80a002cbda4fb45dc6bc49a92dfcafcb200a6db8800
+docker: Error response from daemon: ports are not available: exposing port TCP 0.0.0.0:5000 -> 127.0.0.1:0: listen tcp 0.0.0.0:5000: bind: address already in use
+
+Run 'docker run --help' for more information
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % ps -ef | grep 5000
+  501 28438   753   0  9:39PM ttys003    0:00.01 grep --color=auto --exclude-dir=.bzr --exclude-dir=CVS --exclude-dir=.git --exclude-dir=.hg --exclude-dir=.svn --exclude-dir=.idea --exclude-dir=.tox --exclude-dir=.venv --exclude-dir=venv 5000
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % kill -9 28438
+kill: kill 28438 failed: no such process
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS          PORTS                 NAMES
+99993893f495   mysql     "docker-entrypoint.s…"   13 minutes ago   Up 13 minutes   3306/tcp, 33060/tcp   mysql
+
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker run -d -p 5001:5000 --network two-tier -e MYSQL_HOST=mysql -e MYSQL_USER=root -e MYSQL_PASSWORD=root -e MYSQL_DB=devops two-tier-backend:latest
+701f2e909c5d7a8f06b4362b365c273635eb69298587060663b280d8bcf86dbd
+
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker ps
+CONTAINER ID   IMAGE                     COMMAND                  CREATED          STATUS          PORTS                                         NAMES
+701f2e909c5d   two-tier-backend:latest   "python app.py"          37 seconds ago   Up 37 seconds   0.0.0.0:5001->5000/tcp, [::]:5001->5000/tcp   sad_heisenberg
+99993893f495   mysql                     "docker-entrypoint.s…"   15 minutes ago   Up 15 minutes   3306/tcp, 33060/tcp                           mysql
+
+
+```
+
+## Validation data is updated in mysql
+```
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker exec -it mysql bash
+bash-5.1# mysql -u root -proot
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 18
+Server version: 9.4.0 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2025, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| devops             |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+5 rows in set (0.010 sec)
+
+mysql> use devops;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> show tables;
++------------------+
+| Tables_in_devops |
++------------------+
+| messages         |
++------------------+
+1 row in set (0.003 sec)
+
+mysql> select * from messages;
++----+----------------------------------------------+
+| id | message                                      |
++----+----------------------------------------------+
+|  1 | Hi Raghavendra C N                           |
+|  2 | Wish you Very Happy Birthday                 |
+|  3 | You have great success in coming years       |
+|  4 | Just Achieve want ever you want              |
+|  5 | Lord Krishna with you                        |
+|  6 | 32 LPA Job iw waiting for you, Go and get it |
++----+----------------------------------------------+
+6 rows in set (0.001 sec)
+
+mysql> 
+
+mysql> exit
+Bye
+bash-5.1# exit
+exit
+
+What's next:
+    Try Docker Debug for seamless, persistent debugging tools in any container or image → docker debug mysql
+    Learn more at https://docs.docker.com/go/debug-cli/
+
+
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker network ls
+NETWORK ID     NAME        DRIVER    SCOPE
+9589c07cf4f9   bridge      bridge    local
+445ca6bb4485   host        host      local
+f2287928495a   mynetwork   bridge    local
+c34bc0307275   none        null      local
+0781701dcab6   two-tier    bridge    local
+
+```
+
+## Docker command to network inspect
+
+```
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker network inspect two-tier
+[
+    {
+        "Name": "two-tier",
+        "Id": "0781701dcab610be1ba6a4dff7355544de20407141704250378949c195b5b543",
+        "Created": "2025-10-09T03:43:33.357092042Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.19.0.0/16",
+                    "Gateway": "172.19.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {
+            "701f2e909c5d7a8f06b4362b365c273635eb69298587060663b280d8bcf86dbd": {
+                "Name": "sad_heisenberg",
+                "EndpointID": "336941cb4d5bd9072163ca1b744186c0090a692e6a20c72c7474a214d6decd24",
+                "MacAddress": "56:c8:12:8b:78:90",
+                "IPv4Address": "172.19.0.3/16",
+                "IPv6Address": ""
+            },
+            "99993893f495671f2708ae4917de8e12472520ac83ab0b600a230097865542ba": {
+                "Name": "mysql",
+                "EndpointID": "2ab63d99c23df37176b15f7dc0f64558f0b4b65e0a7d47865073ddfca6f116f8",
+                "MacAddress": "0a:98:f2:63:dc:e0",
+                "IPv4Address": "172.19.0.2/16",
+                "IPv6Address": ""
+            }
+        },
+        "Options": {
+            "com.docker.network.enable_ipv4": "true",
+            "com.docker.network.enable_ipv6": "false"
+        },
+        "Labels": {}
+    }
+]
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker %
+
+```
