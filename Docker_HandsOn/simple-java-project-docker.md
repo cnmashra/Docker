@@ -112,5 +112,53 @@ raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/java-project/simple-ja
 View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/75fdi8sq9am3wjqdb4zxepp3h
 
 What's next:
+    View a summary of image vulnerabilities and recommendations → docker scout quickview
+
+```
+
+```
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/java-project/simple-java-docker % docker images
+REPOSITORY   TAG       IMAGE ID       CREATED              SIZE
+java-app     latest    00a3edf2d16a   About a minute ago   457MB
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/java-project/simple-java-docker % docker run java-app
+Hello, Docker! Current date: Thu Oct 09 01:01:40 UTC 2025
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/java-project/simple-java-docker % vim src/Main.java 
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/java-project/simple-java-docker % cat src/Main.java 
+import java.util.Date;
+
+public class Main {
+    public static void main(String[] args) {
+        Date currentDate = new Date();
+        System.out.println("Hello Raghavendra, Docker running! Current date: " + currentDate);
+    }
+}
+
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/java-project/simple-java-docker % docker build -t java-app .
+[+] Building 2.0s (10/10) FINISHED                                                                                        docker:desktop-linux
+ => [internal] load build definition from Dockerfile                                                                                      0.0s
+ => => transferring dockerfile: 460B                                                                                                      0.0s
+ => [internal] load metadata for docker.io/library/eclipse-temurin:17-jdk                                                                 1.6s
+ => [auth] library/eclipse-temurin:pull token for registry-1.docker.io                                                                    0.0s
+ => [internal] load .dockerignore                                                                                                         0.0s
+ => => transferring context: 2B                                                                                                           0.0s
+ => [1/4] FROM docker.io/library/eclipse-temurin:17-jdk@sha256:8a890d0664b5c3f8bcebd136dc6cdf87ee24b9be3d4c4a952565a4442dcd44e9           0.0s
+ => [internal] load build context                                                                                                         0.0s
+ => => transferring context: 300B                                                                                                         0.0s
+ => CACHED [2/4] WORKDIR /app                                                                                                             0.0s
+ => [3/4] COPY src/Main.java /app/Main.java                                                                                               0.0s
+ => [4/4] RUN javac Main.java                                                                                                             0.3s
+ => exporting to image                                                                                                                    0.0s
+ => => exporting layers                                                                                                                   0.0s
+ => => writing image sha256:abbf8b88d6a0e9c956aa6e6e33c68ada43615e4a3493eec4f35585f2a5988302                                              0.0s
+ => => naming to docker.io/library/java-app                                                                                               0.0s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/mpsspr3c0k3qyi2bmc6hecfj9
+
+What's next:
     View a summary of image vulnerabilities and recommendations → docker scout quickview 
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/java-project/simple-java-docker % docker run java-app
+Hello Raghavendra, Docker running! Current date: Thu Oct 09 01:05:01 UTC 2025
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/java-project/simple-java-docker %
+
+
 ```
