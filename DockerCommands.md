@@ -105,3 +105,33 @@ docker system df
 echo "✅ Docker cleanup completed successfully!"
 
 ```
+
+# To run the docker container in background continuously untill stop use below command
+
+COMMAND
+
+```
+docker run -itd <docker image name>
+
+```
+
+```
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/flask-app-ecs % docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/flask-app-ecs % docker run -itd ubuntu
+Unable to find image 'ubuntu:latest' locally
+latest: Pulling from library/ubuntu
+7bdf644cff2e: Already exists 
+Digest: sha256:728785b59223d755e3e5c5af178fab1be7031f3522c5ccd7a0b32b80d8248123
+Status: Downloaded newer image for ubuntu:latest
+a762bf43e276d4708e842dcc7195405e28bd00cb496d0d14dce4e50b75381e7d
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/flask-app-ecs % docker ps
+CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS         PORTS     NAMES
+a762bf43e276   ubuntu    "/bin/bash"   6 seconds ago   Up 6 seconds             quirky_maxwell
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/flask-app-ecs % docker stop a762bf43e276
+a762bf43e276
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/flask-app-ecs % docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/flask-app-ecs %
+
+```
