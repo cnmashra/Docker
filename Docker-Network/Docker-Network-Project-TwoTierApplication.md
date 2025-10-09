@@ -239,3 +239,26 @@ What's next:
     Learn more at https://docs.docker.com/go/debug-cli/
 
 ```
+
+Removed the mysql due to some error and setup again
+
+```
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS          PORTS                 NAMES
+e52135e6e4d5   mysql     "docker-entrypoint.s…"   11 minutes ago   Up 11 minutes   3306/tcp, 33060/tcp   boring_taussig
+
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker stop e52135e6e4d5 && docker rm e52135e6e4d5
+e52135e6e4d5
+e52135e6e4d5
+
+```
+
+## SET UP AGAIN THE PROJECT WITH CREATING THE NETWORK
+
+```
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker network create two-tier -d bridge
+0781701dcab610be1ba6a4dff7355544de20407141704250378949c195b5b543
+
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker run -d --name mysql --network two-tier -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=devops mysql
+99993893f495671f2708ae4917de8e12472520ac83ab0b600a230097865542ba
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker run -d -p 5000:5000 --network two-tier -e MYSQL_HOST=mysql -e MYSQL_USER=root -e MYSQL_PASSWORD=root -e MYSQL_DB=devops two-tier-backend:latest
