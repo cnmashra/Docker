@@ -78,3 +78,72 @@ Press CTRL+C to quit
 ## open the url http://127.0.0.1:80 in browser and will display like
 
 Hello Dosto, welcome to DevOps Zero To Hero (Junoon Batch 9)
+
+# DOCKER LOGS COMMAND TO Check the logsof docker image
+
+command
+```
+docker logs f223f9635136
+```
+```
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/flask-app-ecs % docker run -d -p 80:80 flask-app
+f223f96351364881c3a69317ac0ff0e38165e8c367a4277aaf12d087c080047e
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/flask-app-ecs % docker ps
+CONTAINER ID   IMAGE       COMMAND           CREATED         STATUS         PORTS                                 NAMES
+f223f9635136   flask-app   "python run.py"   5 seconds ago   Up 5 seconds   0.0.0.0:80->80/tcp, [::]:80->80/tcp   practical_chaum
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/flask-app-ecs % docker logs f223f9635136                                            
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:80
+ * Running on http://172.17.0.2:80
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 965-224-708
+```
+
+# DOCKER ATTACH COMMAND is used to check the how many times browser got refresh
+
+command
+
+```
+docker attach f223f9635136
+```
+
+
+```
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/flask-app-ecs % docker attach f223f9635136 
+192.168.65.1 - - [09/Oct/2025 01:52:03] "GET / HTTP/1.1" 200 -
+192.168.65.1 - - [09/Oct/2025 01:52:09] "GET / HTTP/1.1" 200 -
+192.168.65.1 - - [09/Oct/2025 01:52:09] "GET / HTTP/1.1" 200 -
+192.168.65.1 - - [09/Oct/2025 01:52:09] "GET / HTTP/1.1" 200 -
+192.168.65.1 - - [09/Oct/2025 01:52:10] "GET / HTTP/1.1" 200 -
+192.168.65.1 - - [09/Oct/2025 01:52:10] "GET / HTTP/1.1" 200 -
+192.168.65.1 - - [09/Oct/2025 01:52:10] "GET / HTTP/1.1" 200 -
+
+```
+
+# Docker start and stop command used to run the image using the same created image id
+
+COMMAND
+```
+docker stop <docker image id>
+
+docker start <docker image id>
+```
+
+
+```
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/flask-app-ecs % docker stop f223f9635136
+f223f9635136
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/flask-app-ecs % docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/flask-app-ecs % docker start f223f9635136
+f223f9635136
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/flask-app-ecs % docker ps
+CONTAINER ID   IMAGE       COMMAND           CREATED         STATUS         PORTS                                 NAMES
+f223f9635136   flask-app   "python run.py"   7 minutes ago   Up 2 minutes   0.0.0.0:80->80/tcp, [::]:80->80/tcp   practical_chaum
+
+```
