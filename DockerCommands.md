@@ -193,3 +193,62 @@ Total reclaimed space: 12.5MB
 raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/two-tier-flask-app % 
 
 ```
+
+### command to list all the docker image id
+command
+```
+docker images -ag
+```
+
+```
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/two-tier-flask-app % docker images -aq
+206217c69d38
+84a3832189d4
+ba9f9a6fcaf3
+abbf8b88d6a0
+c3cee4aaf374
+90ec22e21be2
+d598f2517351
+```
+
+### command to remove all the docker images at a time
+
+command
+
+```
+docker rmi -f $(docker images -aq)
+```
+
+```
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/two-tier-flask-app % docker rmi -f $(docker images -aq)
+Untagged: two-tier-flask-app-flask:latest
+Deleted: sha256:206217c69d38de296781e54495ed99972314362c39ce8f52111e6831a9c25a7c
+Untagged: two-tier-backend:latest
+Deleted: sha256:84a3832189d495dfd983f251e7f91c05a7e737f180a57d8c5035598c622cddd1
+Untagged: flask-app:latest
+Deleted: sha256:ba9f9a6fcaf364144507e136474efd9bcbc782f672faaa80fbb59ec695a9cfae
+Untagged: java-app:latest
+Deleted: sha256:abbf8b88d6a0e9c956aa6e6e33c68ada43615e4a3493eec4f35585f2a5988302
+Untagged: ubuntu:latest
+Untagged: ubuntu@sha256:728785b59223d755e3e5c5af178fab1be7031f3522c5ccd7a0b32b80d8248123
+Deleted: sha256:c3cee4aaf374d53303679d87528ae4ad32df1e8d990e482599dc5646d240349e
+Untagged: mysql:latest
+Untagged: mysql@sha256:91447968e66961302339ec4dc4d385f5e1a957d98e63c7d52ecf8b1de0907346
+Deleted: sha256:90ec22e21be27435c6991930424ae28428cd09c82d7928e2c4e5810de8849ccb
+Deleted: sha256:d04847decb00633b8f05ba495194dee37ef5c3981141bac71f950991303e14aa
+Deleted: sha256:5ac68f0c087420896e4fcb4a1444289d398b34ce5a1087454ca5ecc175f5d26c
+Deleted: sha256:3d761445152993caf4e81232f2daa6f2cd7efd9a22943e92e1586521081ff6c5
+Deleted: sha256:025e1fc3a7ef67b90d9b301596dbc002122c866db5480f99c53bbe1ee7776aa5
+Deleted: sha256:1b4cd381863c7236ba92026b99753a3f3e1d99192c9b88ff799a1c9ff566d260
+Deleted: sha256:f660ffbdad6212b82401dec844b3bced91002658fdc36e11742d6efa729b1ea6
+Deleted: sha256:80f274026908724bb12799af59f4adc3fb4ef597db462fc9f3c47d77256b3134
+Deleted: sha256:de0c126eea868ec1026e97a2c1348a66792f3f4b06871f0e5d176bd1a998c44c
+Deleted: sha256:cbf52a700d7a887b0b05264972664fc3baf260cb699c6cae78b61632ac4317c0
+Deleted: sha256:926ca09e80338405c67b56c2a53c40c6cbfd65d36c44dfa4bcbca01418346a84
+Untagged: justincormack/nsenter1:latest
+Untagged: justincormack/nsenter1@sha256:e876f694a4cb6ff9e6861197ea3680fe2e3c5ab773a1e37ca1f13171f7f5798e
+Deleted: sha256:d598f2517351c243ce73e368bd7d4499cf8e4a74cd94b0e261edaf722583e403
+Deleted: sha256:b040f551814915e6b8dd08cbe0cc7ff5475bb92ef0389a735de4220168f1e31d
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/two-tier-flask-app % 
+
+```
