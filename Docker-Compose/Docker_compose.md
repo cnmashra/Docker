@@ -110,6 +110,16 @@ What's next:
     Learn more at https://docs.docker.com/go/debug-cli/
 raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/two-tier-flask-app % 
 
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/two-tier-flask-app % docker compose down
+WARN[0000] /Users/raghavendracn/Documents/Docker/two-tier-flask-app/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+[+] Running 3/3
+ ✔ Container two-tier-backend           Removed                                                                                           0.2s 
+ ✔ Container mysql                      Removed                                                                                           1.3s 
+ ✔ Network two-tier-flask-app_two-tier  Removed                                                                                           0.2s 
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/two-tier-flask-app % docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/two-tier-flask-app %
+
 
 
 ```
