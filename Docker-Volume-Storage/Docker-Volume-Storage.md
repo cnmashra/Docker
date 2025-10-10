@@ -150,8 +150,295 @@ What's next:
     Learn more at https://docs.docker.com/go/debug-cli/
 raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker %
 
+```
+
+## Steps to check the volume mount point in MAC laptop
+
+### 🧠 Option 1: Use the Docker Desktop GUI
+
+1. Open Docker Desktop.
+
+2. Go to the "Volumes" tab on the left sidebar.
+
+3. Search for mysql-data.
+
+4. Click it — you can browse or delete the data right from the GUI.
+
+### 🧠 Option 2: Get the Path Inside the Docker VM
+
+If you want to explore the actual VM:
+
+```
+docker run --rm -it --privileged --pid=host justincormack/nsenter1
+
+```
+
+Then inside, you can:
+```
+cd /var/lib/docker/volumes/mysql-data/_data
+ls
+```
+
+logs
+
+```
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker run --rm -it --privileged --pid=host justincormack/nsenter1
+
+Unable to find image 'justincormack/nsenter1:latest' locally
+latest: Pulling from justincormack/nsenter1
+726619a9fa8c: Pull complete 
+Digest: sha256:e876f694a4cb6ff9e6861197ea3680fe2e3c5ab773a1e37ca1f13171f7f5798e
+Status: Downloaded newer image for justincormack/nsenter1:latest
+sh-5.2# cd /var/lib/docker/volumes/mysql-data/_data
+sh-5.2# ls
+'#ib_16384_0.dblwr'   auto.cnf	      binlog.index      client-key.pem	 ibtmp1       mysql_upgrade_history   server-cert.pem   undo_002
+'#ib_16384_1.dblwr'   binlog.000001   ca-key.pem        devops		 mysql	      performance_schema      server-key.pem
+'#innodb_redo'	      binlog.000002   ca.pem	        ib_buffer_pool	 mysql.ibd    private_key.pem	      sys
+'#innodb_temp'	      binlog.000003   client-cert.pem   ibdata1		 mysql.sock   public_key.pem	      undo_001
+sh-5.2#
+```
+
+### 🧠 Option 4: Export Volume Data (optional)
+
+If you want to copy data out to your Mac filesystem:
+
+```
+docker run --rm \
+  -v mysql-data:/volume \
+  -v $(pwd):/backup \
+  alpine tar czf /backup/mysql_data_backup.tar.gz -C /volume .
+```
 
 
+### ✅ Summary
+
+```
+| Task                 | Command or Action                                                                                                      |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Explore contents     | `docker run -it --rm -v mysql-data:/data alpine /bin/sh`                                                               |
+| GUI access           | Docker Desktop → Volumes tab                                                                                           |
+| See inside Docker VM | `docker run --rm -it --privileged --pid=host justincormack/nsenter1`                                                   |
+| Backup volume data   | `docker run --rm -v mysql-data:/volume -v $(pwd):/backup alpine tar czf /backup/mysql_data_backup.tar.gz -C /volume .` |
 
 
 ```
+
+# Groovy script for backup
+
+### Perfect 👌 — here’s a simple and production-friendly Groovy Jenkins pipeline script that:
+
+1. Checks if a Docker volume (e.g. mysql-data) exists.
+
+2. Prints the mount info.
+
+3. If the volume does not exist, it fails the pipeline and notifies via console (and optionally Teams/Slack later).
+
+### ✅ Groovy Jenkinsfile — Check Docker Volume Health
+
+```
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_VOLUME = "mysql-data"
+    }
+
+    stages {
+        stage('Check Docker Volume Health') {
+            steps {
+                script {
+                    echo "🔍 Checking if Docker volume '${DOCKER_VOLUME}' exists..."
+
+                    // Check if the volume exists
+                    def volumeCheck = sh(script: "docker volume inspect ${DOCKER_VOLUME} >/dev/null 2>&1", returnStatus: true)
+
+                    if (volumeCheck == 0) {
+                        echo "✅ Docker volume '${DOCKER_VOLUME}' found!"
+
+                        // Show details
+                        sh """
+                        echo '📦 Volume Details:'
+                        docker volume inspect ${DOCKER_VOLUME}
+                        """
+                    } else {
+                        echo "❌ Docker volume '${DOCKER_VOLUME}' not found! Failing pipeline..."
+                        error("Docker volume '${DOCKER_VOLUME}' does not exist.")
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        failure {
+            echo "🚨 Pipeline failed! Sending notifications..."
+
+            // 🔹 Example for Teams notification (optional)
+            // Replace <WEBHOOK_URL> with your MS Teams Incoming Webhook URL
+            sh '''
+            curl -H 'Content-Type: application/json' \
+                 -d '{"text": "🚨 Jenkins Alert: Docker volume check failed for volume '${DOCKER_VOLUME}'"}' \
+                 https://outlook.office.com/webhook/<WEBHOOK_URL>
+            '''
+
+            // 🔹 Example for Slack notification (optional)
+            // Replace <SLACK_WEBHOOK_URL> with your Slack Incoming Webhook URL
+            sh '''
+            curl -X POST -H 'Content-type: application/json' \
+                 --data '{"text":"🚨 Jenkins: Docker volume '${DOCKER_VOLUME}' not found!"}' \
+                 <SLACK_WEBHOOK_URL>
+            '''
+        }
+        success {
+            echo "🎉 Docker volume health verified successfully!"
+        }
+    }
+}
+
+```
+
+### 🧠 How It Works
+
+```
+| Step                       | Description                                  |
+| -------------------------- | -------------------------------------------- |
+| `docker volume inspect`    | Checks if the specified Docker volume exists |
+| `returnStatus: true`       | Returns 0 if found, 1 if not found           |
+| `error()`                  | Fails the Jenkins stage gracefully           |
+| `post { failure { ... } }` | Triggers notifications if pipeline fails     |
+
+```
+
+### 🧩 Optional Add-ons
+
+You can extend this:
+
+1. To check multiple volumes by looping through a list.
+
+2. To send rich Teams cards or Slack blocks (for better formatted alerts).
+
+3. To also verify the mount point and data path integrity.
+
+
+Excellent 👍 — here’s the enhanced Jenkins Groovy pipeline that checks multiple Docker volumes, summarizes the results, and sends notifications if any volume is missing or unhealthy.
+
+This version is perfect for SRE / DevOps health monitoring pipelines — runs in Jenkins, verifies infrastructure state, and can alert via Teams and Slack when issues are detected.
+
+## 🧩 Jenkinsfile — Multi-Volume Docker Health Check with Notifications
+
+```
+pipeline {
+    agent any
+
+    environment {
+        // List of Docker volumes to verify
+        DOCKER_VOLUMES = "mysql-data redis-data app-logs"
+        TEAMS_WEBHOOK = "https://outlook.office.com/webhook/<YOUR_TEAMS_WEBHOOK_URL>"
+        SLACK_WEBHOOK = "https://hooks.slack.com/services/<YOUR_SLACK_WEBHOOK_URL>"
+    }
+
+    stages {
+        stage('Check Docker Volumes Health') {
+            steps {
+                script {
+                    def missingVolumes = []
+                    def healthyVolumes = []
+
+                    echo "🔍 Checking Docker volume health status...\n"
+
+                    for (vol in DOCKER_VOLUMES.tokenize()) {
+                        def status = sh(script: "docker volume inspect ${vol} >/dev/null 2>&1", returnStatus: true)
+
+                        if (status == 0) {
+                            echo "✅ Volume '${vol}' exists and is healthy."
+                            healthyVolumes << vol
+                        } else {
+                            echo "❌ Volume '${vol}' is missing or corrupted."
+                            missingVolumes << vol
+                        }
+                    }
+
+                    // Print summary
+                    echo "\n📦 Docker Volume Health Summary:"
+                    echo "--------------------------------"
+                    echo "Healthy Volumes: ${healthyVolumes}"
+                    echo "Missing Volumes: ${missingVolumes}"
+
+                    // Fail the build if any volume is missing
+                    if (missingVolumes.size() > 0) {
+                        currentBuild.result = 'FAILURE'
+
+                        // Send notifications
+                        def message = """
+🚨 *Jenkins Alert - Docker Volume Health Check Failed!*
+*Missing Volumes:* ${missingVolumes}
+*Healthy Volumes:* ${healthyVolumes}
+"""
+
+                        // Microsoft Teams Notification
+                        sh """
+                        curl -H 'Content-Type: application/json' \
+                             -d '{"text": "${message.replaceAll('"','\\"')}"}' \
+                             ${TEAMS_WEBHOOK}
+                        """
+
+                        // Slack Notification
+                        sh """
+                        curl -X POST -H 'Content-type: application/json' \
+                             --data '{"text": "${message.replaceAll('"','\\"')}"}' \
+                             ${SLACK_WEBHOOK}
+                        """
+
+                        error("❌ One or more Docker volumes are missing. See summary above.")
+                    } else {
+                        echo "🎉 All Docker volumes are healthy!"
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ All volumes are present and healthy."
+        }
+        failure {
+            echo "🚨 Jenkins pipeline failed — missing Docker volumes detected."
+        }
+    }
+}
+
+```
+
+### 🧠 What This Script Does
+
+```
+| Step                              | Description                                    |
+| --------------------------------- | ---------------------------------------------- |
+| `DOCKER_VOLUMES`                  | List of volumes to check — space-separated     |
+| `docker volume inspect`           | Verifies existence of each volume              |
+| `missingVolumes`                  | Stores volumes that failed the check           |
+| `Teams & Slack notifications`     | Sends formatted alert messages                 |
+| `currentBuild.result = 'FAILURE'` | Marks pipeline failed if any volume is missing |
+
+```
+
+### 📬 Example Notification Message
+
+Teams / Slack Alert:
+
+```
+🚨 Jenkins Alert - Docker Volume Health Check Failed!
+Missing Volumes: [redis-data]
+Healthy Volumes: [mysql-data, app-logs]
+
+```
+
+
+### ✅ How to Use
+
+1. Replace the <YOUR_TEAMS_WEBHOOK_URL> and <YOUR_SLACK_WEBHOOK_URL> values.
+
+2. Save as Jenkinsfile in your repo or Jenkins job.
+
+3. Run the pipeline — it will automatically detect missing volumes.
