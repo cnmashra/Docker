@@ -462,6 +462,84 @@ raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker stop 5f2c2668
 # Docker Storage (saving in local laptop)
 
 ```
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/volumes/mysql % docker stop mysql && docker rm mysql
+mysql
+mysql
 
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % mkdir volumes
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % cd volumes
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/volumes % mkdir mysql
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/volumes % cd mysql 
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/volumes/mysql % pwd
+/Users/raghavendracn/Documents/Docker/volumes/mysql
+
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/volumes/mysql % docker run -d --name mysql --network two-tier -v /Users/raghavendracn/Documents/Docker/volumes/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=devops mysql
+5d35cbad1305f3cdc18d5db7293792e5602846c1336ee0f3a2bd57052176684f
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/volumes/mysql % docker run -d -p 5001:5000 --network two-tier -e MYSQL_HOST=mysql -e MYSQL_USER=root -e MYSQL_PASSWORD=root -e MYSQL_DB=devops two-tier-backend:latest
+d7b093745defc0e61e47ebffe75b415d1caae6a384eaec578cf4c526392c7d00
+
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/volumes/mysql % docker ps
+CONTAINER ID   IMAGE                     COMMAND                  CREATED          STATUS          PORTS                                         NAMES
+d7b093745def   two-tier-backend:latest   "python app.py"          16 seconds ago   Up 15 seconds   0.0.0.0:5001->5000/tcp, [::]:5001->5000/tcp   flamboyant_swirles
+5d35cbad1305   mysql                     "docker-entrypoint.s…"   44 seconds ago   Up 44 seconds   3306/tcp, 33060/tcp                           mysql
+
+STORAGE IS CREATED LOCALLY IN LAOPTOP
+
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/volumes/mysql % ls
+#ib_16384_0.dblwr     binlog.000001         client-cert.pem       ibtmp1                performance_schema    sys
+#ib_16384_1.dblwr     binlog.000002         client-key.pem        mysql                 private_key.pem       undo_001
+#innodb_redo          binlog.index          devops                mysql_upgrade_history public_key.pem        undo_002
+#innodb_temp          ca-key.pem            ib_buffer_pool        mysql.ibd             server-cert.pem
+auto.cnf              ca.pem                ibdata1               mysql.sock            server-key.pem
+
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/volumes/mysql % docker exec -it 5d35cbad1305 bash
+bash-5.1# mysql -u root -proot
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 15
+Server version: 9.4.0 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2025, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use devops;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> select * from messages;
++----+----------------+
+| id | message        |
++----+----------------+
+|  1 | Docker storage |
+|  2 | created        |
+|  3 | successfully   |
++----+----------------+
+3 rows in set (0.001 sec)
+
+mysql> exit
+Bye
+bash-5.1# exit
+exit
+
+What's next:
+    Try Docker Debug for seamless, persistent debugging tools in any container or image → docker debug 5d35cbad1305
+    Learn more at https://docs.docker.com/go/debug-cli/
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/volumes/mysql %
+
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/volumes/mysql % docker ps
+CONTAINER ID   IMAGE                     COMMAND                  CREATED         STATUS         PORTS                                         NAMES
+d7b093745def   two-tier-backend:latest   "python app.py"          4 minutes ago   Up 4 minutes   0.0.0.0:5001->5000/tcp, [::]:5001->5000/tcp   flamboyant_swirles
+5d35cbad1305   mysql                     "docker-entrypoint.s…"   4 minutes ago   Up 4 minutes   3306/tcp, 33060/tcp                           mysql
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/volumes/mysql % docker stop d7b093745def 5d35cbad1305 && docker rm d7b093745def 5d35cbad1305
+d7b093745def
+5d35cbad1305
+d7b093745def
+5d35cbad1305
 
 ```
