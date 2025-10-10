@@ -442,3 +442,24 @@ Healthy Volumes: [mysql-data, app-logs]
 2. Save as Jenkinsfile in your repo or Jenkins job.
 
 3. Run the pipeline — it will automatically detect missing volumes.
+
+
+'''
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker ps
+CONTAINER ID   IMAGE                     COMMAND                  CREATED        STATUS       PORTS                                         NAMES
+5f2c2668624c   mysql                     "docker-entrypoint.s…"   2 hours ago    Up 2 hours   3306/tcp, 33060/tcp                           mysql
+701f2e909c5d   two-tier-backend:latest   "python app.py"          10 hours ago   Up 2 hours   0.0.0.0:5001->5000/tcp, [::]:5001->5000/tcp   sad_heisenberg
+raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker stop 5f2c2668624c 701f2e909c5d && docker stop 5f2c2668624c 701f2e909c5d
+5f2c2668624c
+701f2e909c5d
+5f2c2668624c
+701f2e909c5d
+````
+==============================================================
+
+# Docker Storage (saving in local laptop)
+
+```
+
+
+```
