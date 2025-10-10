@@ -443,6 +443,8 @@ Healthy Volumes: [mysql-data, app-logs]
 
 3. Run the pipeline — it will automatically detect missing volumes.
 
+```
+
 
 '''
 raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker % docker ps
