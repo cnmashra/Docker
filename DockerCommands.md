@@ -219,7 +219,7 @@ command
 docker rmi -f $(docker images -aq)
 ```
 
-
+```
 raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/two-tier-flask-app % docker rmi -f $(docker images -aq)
 Untagged: two-tier-flask-app-flask:latest
 Deleted: sha256:206217c69d38de296781e54495ed99972314362c39ce8f52111e6831a9c25a7c
