@@ -141,6 +141,7 @@ raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/flask-app-ecs %
 command
 ```
 docker system prune
+```
 
 ```
 raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/two-tier-flask-app % docker system prune
