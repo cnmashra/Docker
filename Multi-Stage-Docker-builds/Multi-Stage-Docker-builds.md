@@ -50,3 +50,5 @@ What's next:
 raghavendracn@Raghavendras-MacBook-Pro:~/Documents/Docker/flask-app-ecs % 
 
 ```
+
+<img width="1351" height="286" alt="image" src="https://github.com/user-attachments/assets/b574c33d-0ee6-4dbf-8550-6ffcc91e1eec" />
